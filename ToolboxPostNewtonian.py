@@ -74,7 +74,7 @@ plt.rcParams.update(params)
 
 # -------------------------------
 # Compute physical information
-def physicalinformation(DMpc, m1Mo, m2Mo, flow, fs, PNorder, doprint):
+def GWphysicalinformation(DMpc, m1Mo, m2Mo, flow, fs, PNorder, doprint):
    
     # -------------------------------
     # Convert distance from Mpc to m
@@ -110,7 +110,7 @@ def physicalinformation(DMpc, m1Mo, m2Mo, flow, fs, PNorder, doprint):
 
     # -------------------------------
     # Compute Tchirp
-    Tchirp, Nsamples = ComputeTchirp(PNorder, nu, Mtotal, flow, fs, False) # seconds and samples
+    Tchirp, Nsamples = GWchirpduration(PNorder, nu, Mtotal, flow, fs, False) # seconds and samples
 
     # -------------------------------
     # Create time vector
@@ -124,19 +124,19 @@ def physicalinformation(DMpc, m1Mo, m2Mo, flow, fs, PNorder, doprint):
     
     # Plot
     if doprint:
-        print("Distance:                              {0:1.2e} m".format(D) )
+        print("Distance:                        {0:1.2e} m".format(D) )
         
-        print("Mass 1:                                {0:1.2e} kg".format(m1) )
-        print("Mass 2:                                {0:1.2e} kg".format(m2) )
-        print("Total mass:                            {0:1.2e} kg".format(Mtotal) )
-        print("Reduced mass ($\mu$):                  {0:1.2e} kg".format(mu) )
-        print("Symmetric mass ratio ($\nu$):          {0:1.2f}".format(nu) )
-        print("Chirp mass:                            {0:1.2e} kg".format(Mchirp) )
+        print("Mass 1:                          {0:1.2e} kg".format(m1) )
+        print("Mass 2:                          {0:1.2e} kg".format(m2) )
+        print("Total mass:                      {0:1.2e} kg".format(Mtotal) )
+        print("Reduced mass:                    {0:1.2e} kg".format(mu) )
+        print("Symmetric mass ratio:            {0:1.2f}".format(nu) )
+        print("Chirp mass:                      {0:1.2e} kg".format(Mchirp) )
 
-        print("Frequency isco:                        {0:1.2f} Hz".format(fisco) )
-        print("Number of cycles:                      {0:1.2f}".format(Ncyc) )
-        print("Duration of the GW signal:             {0:1.2f} s".format(Tchirp) )
-        print("Number of samples in the GW signal:    {0:d}".format(Nsamples) )
+        print("Frequency isco:                  {0:1.2f} Hz".format(fisco) )
+        print("Number of cycles:                {0:1.2f}".format(Ncyc) )
+        print("Duration of the GW signal:       {0:1.2f} s".format(Tchirp) )
+        print("Number of samples in the signal: {0:d}".format(Nsamples) )
 
         #print("Coalescence time (s):                  {0:1.2f}".format(t_coal) )
         #print("Coalescence phase (rad):               {0:1.2f}".format(phi_coal) )
@@ -148,7 +148,7 @@ def physicalinformation(DMpc, m1Mo, m2Mo, flow, fs, PNorder, doprint):
 
 # -------------------------------
 # Compute chirp duration "Tchirp"
-def ComputeTchirp(PNorder, nu, Mtotal, flow, fs, doprint):
+def GWchirpduration(PNorder, nu, Mtotal, flow, fs, doprint):
     """
     Check https://arxiv.org/pdf/0903.0338.pdf
 
@@ -200,8 +200,8 @@ def ComputeTchirp(PNorder, nu, Mtotal, flow, fs, doprint):
     
     # Plot
     if doprint:
-        print("Duration of the GW signal:             {0:1.2f} s".format(Tchirp) )
-        print("Number of samples in the GW signal:    {0:d}".format(Nsamples) )
+        print("Duration of the GW signal:       {0:1.2f} s".format(Tchirp) )
+        print("Number of samples in the signal: {0:d}".format(Nsamples) )
     
     # Return
     return Tchirp, Nsamples
@@ -210,7 +210,7 @@ def ComputeTchirp(PNorder, nu, Mtotal, flow, fs, doprint):
 
 # -------------------------------
 # Compute $\Theta(t)$
-def Thetat(nu, Mtotal, t_coal, t, doplot):
+def GWtheta(nu, Mtotal, t_coal, t, doplot):
     """
     $\Theta(t):= \frac{c^3\nu^2}{5Gm}(t_c-t)$
 
@@ -239,7 +239,7 @@ def Thetat(nu, Mtotal, t_coal, t, doplot):
 
 # -------------------------------
 # Compute orbital phase and frequency
-def orbitalphaseandfrequency(PNorder, Thetat, nu, Mtotal, t, doplot):
+def GWorbitalphaseandfrequency(PNorder, Thetat, nu, Mtotal, t, doplot):
     """
     For the case of circular orbit, named here 0 PN, (see Magiore's book [Pag. XX, Equ. XX]):
     $\phi(t) = ...$
@@ -403,14 +403,14 @@ def orbitalphaseandfrequency(PNorder, Thetat, nu, Mtotal, t, doplot):
 
 # -------------------------------
 # Compute orbital phase and frequency
-def gwphaseandfrequency(PNorder, Thetat, nu, Mtotal, phi_0, t, doplot):
+def GWphaseandfrequency(PNorder, Thetat, nu, Mtotal, phi_0, t, doplot):
     """
     REFERENCIAR
     """
     
     # -------------------------------
     # Compute orbital phase and frequency
-    P, F = orbitalphaseandfrequency(PNorder, Thetat, nu, Mtotal, t, False)
+    P, F = GWorbitalphaseandfrequency(PNorder, Thetat, nu, Mtotal, t, False)
     
     # -------------------------------
     # Compute GW phase and frequency
@@ -443,21 +443,16 @@ def gwphaseandfrequency(PNorder, Thetat, nu, Mtotal, phi_0, t, doplot):
     return phit, ft    
 
 
+
 # -------------------------------
 # Compute GW hp and hc
-def hphc(phit, ft, Mchirp, D, iota, t, doplot):
+def GWamplitude(ft, Mchirp, t, doplot):
     """
     For $A(t)$ see Magiore's book [Pag. 291, Equ. 5.242] or Thesis machos [Pag. 36, Equ. 2.99]
-
-    For $h_{+}$ and $h_{\times}$ see Magiore's book [Pag. XXX, Equ. XXX] or Thesis machos [Pag. XXX, Equ. XXX]
     """
     
     # Compute A(t)
     At            = 4 * np.power(G*Mchirp/c2,5/3) * np.power(np.pi*ft/c,2/3)
-    
-    # Compute GW: hp and hc polarizations
-    hp            = (1/D) * At * (1+np.cos(iota)**2)/2  * np.cos(phit)
-    hc            = (1/D) * At * np.cos(iota)           * np.sin(phit)
     
     # Plot
     if doplot:
@@ -470,7 +465,23 @@ def hphc(phit, ft, Mchirp, D, iota, t, doplot):
         plt.legend()
         plt.tight_layout()
         plt.show()
-        
+    
+    # Return
+    return At
+
+
+# -------------------------------
+# Compute GW hp and hc
+def GWhphc(phit, At, D, iota, t, doplot):
+    """
+    For $h_{+}$ and $h_{\times}$ see Magiore's book [Pag. XXX, Equ. XXX] or Thesis machos [Pag. XXX, Equ. XXX]
+    """
+    
+    # Compute GW: hp and hc polarizations
+    hp            = (1/D) * At * (1+np.cos(iota)**2)/2  * np.cos(phit)
+    hc            = (1/D) * At * np.cos(iota)           * np.sin(phit)
+    
+    # Plot        
     if doplot:
         plt.figure()
         plt.plot(t-t[-1], hp, label=r"$h_{+}(t)$")
@@ -485,4 +496,37 @@ def hphc(phit, ft, Mchirp, D, iota, t, doplot):
         plt.show()
           
     # Return
-    return hp, hc, At
+    return hp, hc
+
+
+
+# -------------------------------
+# Compute GW hp and hc from physical parameters
+def GWcomputehphc(DMpc, m1Mo, m2Mo, iota, phi_0, flow, fs, PNorder, doprint, doplot):
+    """
+    Compute GW hp and hc from physical parameters
+    """
+    
+    # -------------------------------
+    # 1) Compute all information
+    D, m1, m2, Mtotal, mu, eta, Mchirp, fisco, Ncyc, Tchirp, Nsamples, \
+    t, t_coal, phi_coal = GWphysicalinformation(DMpc, m1Mo, m2Mo, flow, fs, PNorder, doprint)
+    
+    # -------------------------------
+    # 2) Compute $\Theta(t)$
+    Thetat       = GWtheta(eta, Mtotal, t_coal, t, doplot)
+    
+    # -------------------------------
+    # 3) Compute $\phi(t)$ and $f(t)$
+    phit, ft     = GWphaseandfrequency(PNorder, Thetat, eta, Mtotal, phi_0, t, doplot)
+    
+    # -------------------------------
+    # 4) Compute $A(t)$
+    At           = GWamplitude(ft, Mchirp, t, doplot)
+    
+    # -------------------------------
+    # 5) Compute $h_{+}(t)$ and $h_{\times}(t)$
+    hp, hc       = GWhphc(phit, At, D, iota, t, doplot)
+          
+    # Return
+    return hp, hc, t
